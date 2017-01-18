@@ -1,0 +1,385 @@
+2016 Texas Election Contributions by Ana Javed:
+========================================================
+
+The 2016 U.S. Presidential Election brought several unexpected results that reshaped the vision many Americans had for the country. States were closely monitored by analysts to gauge whether they would swing in favor of Hillary R. Clinton (D) or Donald Trump (R). Texas was particularly unique in this election because, despite voting consistently Republican since 1980, many Texan voters did not default to Republican party candidate. Even though Donald Trump won Texas by the end, it occurred on a slimmer margin than the previous 2012 election. By analyzing campaign contributions however, I strive to achieve a better understanding of how donations may have reflected the political atmosphere of Texas at the time of the election.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
+# Notice that the parameter "echo" was set to FALSE for this code chunk.
+# This prevents the code from displaying in the knitted HTML output.
+# You should set echo=FALSE for all code chunks in your file.
+
+setwd('~/Desktop')
+library(ggplot2)
+library(knitr)
+library(dplyr)
+library(gridExtra)
+library(GGally) 
+library(scales)
+
+```
+
+```{r echo=FALSE, Load_the_Data}
+# Load the Data
+tx <- read.csv("P_TX.csv", header=TRUE, row.names=NULL)
+```
+  
+# Univariate Plots Section
+The dataset was obtained from the Federal Election Commission site. It has 19 variables and almost 54,000 observations. Below are the dimensions and summary of the data.
+
+```{r echo=FALSE, Univariate_Plots}
+
+dim(tx) 
+summary(tx)
+
+#summary of donations per candidate
+tx_candidates <- tx %>%
+  group_by(cand_nm) %>%
+  summarise(donation_total = sum(contb_receipt_amt),
+            mean_donation = mean(contb_receipt_amt),
+            median_donation= median(contb_receipt_amt),
+            number_of_donations= length(cand_id))
+
+#summary of donations by city
+tx_cities <- tx %>%
+  group_by(contbr_city) %>%
+  summarise(donation_total = sum(contb_receipt_amt),
+            mean_donation = mean(contb_receipt_amt),
+            median_donation= median(contb_receipt_amt),
+            number_of_donations= length(contb_receipt_amt),
+            hc_support = sum(cand_nm == 'Clinton, Hillary Rodham'),
+            tc_support = sum(cand_nm == "Cruz, Rafael Edward 'Ted'"),
+            bs_support = sum(cand_nm == "Sanders, Bernard"),
+            dt_support = sum(cand_nm == "Trump, Donald J."),
+            bc_support = sum(cand_nm == "Carson, Benjamin S."))
+```
+
+###Breakdown by Candidates: 
+The bar graph displays the amount of donations each candidate received. Candidates with donations greater than 1,000 were only shown on the plot. Hillary Clinton received the most donations across Texas with over 200,000 donations. Ted Cruz came second, with Bernie Sanders and Donald Trump following. Ted Cruz was a Texan Senator before the election, which can explain his popularity and number of donations received. I am curious to see the totals for all the candidate's donations.
+
+```{r echo=FALSE}
+#candidates bar graph
+ggplot(aes(x=cand_nm, y=number_of_donations), data=subset(tx_candidates, number_of_donations>1000)) +
+  geom_bar(stat='identity') + theme(axis.text.x = element_text(margin = margin(r =10 , b=10, l=10, t=0), angle=90))
+
+tail(sort(summary(tx$cand_nm)), 11)
+ #top 11 candidates: 'Kasich, John R.', 'Johnson, Gary', 'Fiorina, Carly','Paul, Rand','Bush, Jeb', 'Rubio, Marco', 'Carson, Benjamin S.', 'Trump, Donald J.',"Sanders, Bernard", "Cruz,Rafael Edward 'Ted'", "Clinton, Hillary Rodham"
+```
+
+###Breakdown by Cities: 
+The top cities were donations were most made included: Houston, Austin, Dallas, San Antonio, Fort Worth, and Plano. Houston is the most populated city in Texas, with Austin in second, which could explain the high number of donations in these cities. I am interested in finding how each city leans politically. 
+
+```{r echo=FALSE}
+#cities bar graph
+  ggplot(aes(x=contbr_city, y=number_of_donations), data=subset(tx_cities, number_of_donations>3500)) +
+  geom_bar(stat='identity') + theme(axis.text.x = element_text(margin = margin(r =10 , b=10, l=10, t=0), angle=90))
+       
+tail(sort(summary(tx$contbr_city)), 20)
+#top 15 cities:  HOUSTON, AUSTIN, DALLAS, SAN ANTONIO, FORT WORTH, PLANO, SPRING, EL PASO, ARLINGTON,KATY,LUBBOCK, SUGAR LAND, CORPUS CHRISTI, FRISC, MIDLAND 
+```
+
+###Breakdown by Donation Levels: 
+After creating a new variable "Donation_Level", I grouped the donation amounts into 5 levels: "$200 and Under", "$200.1-499", "$500-999", "$1000-1999", and "$2000 and over". There were overwhelmingly more donations under $200, as demonstrated by the first plot. Then I was interested to demonstrate which types of donations candidates received most. 
+
+In summary, Hillary Clinton received over 175,000 donations of $200 or less. For donations between $500-999, Donald Trump received over 10,500 donations. As the donation value increased, both Hillary Clinton and Ted Cruz continued to compete for the most donations. 
+
+```{r echo=FALSE}
+
+#creating donation levels variable
+
+less_200 <- tx$contb_receipt_amt <= 200
+up_to_400 <- tx$contb_receipt_amt >200.1
+up_to_1000 <-tx$contb_receipt_amt >=500
+sec_highest <- tx$contb_receipt_amt >=1000
+highest <- tx$contb_receipt_amt >=2000
+ 
+tx$donation_level <- ifelse(less_200, "$200 and Under", "Above 200")
+tx$donation_level <- ifelse(up_to_400, "$200.1 -499", tx$donation_level)
+tx$donation_level <- ifelse(up_to_1000, "$500-999", tx$donation_level)
+tx$donation_level <- ifelse(sec_highest, "$1000-1999", tx$donation_level)
+tx$donation_level <- ifelse(highest, "$2000 and over", tx$donation_level)
+
+tx$donation_level <- as.factor(tx$donation_level)
+
+#ordering donation factors 
+tx$donation_level <- factor(tx$donation_level, levels =c("$200 and Under","$200.1 -499" ,"$500-999","$1000-1999","$2000 and over", ordered=T))
+
+#donations buckets histogram
+ggplot(aes(x=donation_level), data=tx) + geom_bar(stat='count') + scale_y_sqrt()
+
+summary(tx$donation_level)
+
+```
+
+Donations Under $200: 
+It is apparent that the top 5 candidates receiving donations valued $200 or less are Hillary Clinton (D), Ted Cruz (R), Bernie Sanders (D), Donald Trump(R), and Ben Carson(R). 
+
+```{r echo=FALSE}
+#donations to candidates under 200:
+ggplot(aes(x=cand_nm), data=subset(tx, donation_level =='$200 and Under')) + geom_bar(stat='count') +
+  theme(axis.text.x = element_text(margin = margin(r =10 , b=10, l=10, t=0), angle=90))
+```
+
+Donations between $200.1-499:
+For donations valued higher, Donald Trump (R) received the most with Hillary Clinton (D), Ted Cruz (R), Ben Carson (R), and Bernie Sanders (D) following. It is interesting to note that even though Texas is overall considered a "red" or Republican state, Hillary Clinton is still receiving similar if not more donations than her political counterparts. 
+
+```{r echo=FALSE}
+#candidate donations 200-499
+ggplot(aes(x=cand_nm), data=subset(tx, donation_level =='$200.1 -499')) + geom_bar(stat='count') + 
+  theme(axis.text.x = element_text(margin = margin(r =10 , b=10, l=10, t=0), angle=90))
+```
+
+Donations between $500-999:
+With higher donation amounts, Donald Trump (R), Ted Cruz (R), and Hillary Clinton (D) still have the highest donation counts. Other candidates such as Bernie Sanders (D) and Ben Carson (R) received drastically less donations. 
+
+```{r echo=FALSE}
+#candidate donations 500-999
+ggplot(aes(x=cand_nm), data=subset(tx, donation_level =='$500-999')) + geom_bar(stat='count') + 
+  theme(axis.text.x = element_text(margin = margin(r =10 , b=10, l=10, t=0), angle=90))
+```
+
+Donations between $1000-1999:
+It is important to notice that donations to Donald Trump(R) have decreased, with Hillary Clinton(D) and Ted Cruz(R) receiving the most donations in this category. 
+
+```{r echo=FALSE} 
+#candidate donations $1000-1999
+ggplot(aes(x=cand_nm), data=subset(tx, donation_level =='$1000-1999')) + geom_bar(stat='count') + 
+  theme(axis.text.x = element_text(margin = margin(r =10 , b=10, l=10, t=0), angle=90))
+```
+
+Donations over $2000:
+Ted Cruz(R) and Hillary Clinton(D) remain close in donations in this category as well, with donations to Donald Trump (R) decreasing.
+
+```{r echo=FALSE} 
+#candidate donations $2000 and over
+ggplot(aes(x=cand_nm), data=subset(tx, donation_level =='$2000 and over')) + geom_bar(stat='count') +
+  theme(axis.text.x = element_text(margin = margin(r =10 , b=10, l=10, t=0), angle=90))
+```
+
+### Breakdown by Contributors:
+After grouping the data based off of individual contributor information, the plot displays how many donations each donor contributed. After creating the first plot, I adjusted the y axis by log10, and the x axis with limits. There is one noticeable outlier that is over 60,000 donations. 
+
+```{r echo=FALSE}
+
+#contrb_name counts
+
+tx_contributors <- tx %>%
+  group_by(contbr_nm) %>%
+  summarise(contributions_total = sum(contb_receipt_amt),
+            number_of_donations= length(contb_receipt_amt))
+
+ggplot(aes(x=number_of_donations), data=tx_contributors) + geom_bar(stat='count') + 
+  theme(axis.text.x = element_text(margin = margin(r =10 , b=10, l=10, t=0), angle=90))
+
+
+ggplot(aes(x=number_of_donations), data=tx_contributors) + geom_bar(stat='count') + 
+  theme(axis.text.x = element_text(margin = margin(r =10 , b=10, l=10, t=0), angle=90)) + coord_cartesian(xlim=c(0,100)) + scale_y_log10()
+
+```
+
+### Breakdown by Contributor Occupations:
+A contributor can be influenced politically by their lifestyles and occupations. A person's occupation influences how much they can donate. Here is a break down of which occupations donated the most and the least. Stats of the top 10 occupations are listed as well. It is also apparent that those who are retired contributed in the highest of numbers.
+
+```{r echo=FALSE,message=FALSE, warning= FALSE}
+
+tx_occupations <- tx %>%
+  group_by(contbr_occupation) %>%
+  summarise(contributions_total = sum(contb_receipt_amt),
+            mean_contribution = mean(contb_receipt_amt),
+            total_employees= length(contbr_occupation),
+            number_of_donations= length(unique(contb_receipt_amt)))
+
+ggplot(aes(x=contbr_occupation, y=total_employees), data=subset(tx_occupations, total_employees>2000 & !is.na(contbr_occupation) & tx_occupations !='INFORMATION REQUESTED PER BEST EFFORTS' )) + geom_bar(stat='identity') + theme(axis.text.x = element_text(angle=90)) + scale_y_sqrt()
+
+head(summary(tx$contbr_occupation), 10)
+      
+
+```
+
+# Univariate Analysis
+
+#### What is the structure of your dataset?
+The dataset, TX, contains 19 variables with nearly 54,000 observations.
+
+#### What is/are the main feature(s) of interest in your dataset? What other features in the dataset do you think will help support your investigation into your feature(s) of interest?
+I am very interested in examining if living in a particular city influences who a contributor donates to. I also want to further explore the backgrounds of the contributors (such as amount donated, their occupation, and the number of donations), which will shed more light on the voters and donors in Texas. 
+
+#### Did you create any new variables from existing variables in the dataset?
+Yes, as mentioned above, I created the donation_level variable to group donation values in certain bins.
+
+#### Of the features you investigated, were there any unusual distributions? Did you perform any operations on the data to tidy, adjust, or change the form of the data? If so, why did you do this?
+I applied log10 to the y axis of the last plot, which examined the number of donations each contributor made. The original graph was extremely skewed to the right and I wanted to have more insight on the plotted data. I also adjusted the x-axis using coord_cartesian(). 
+
+
+# Bivariate Plots Section
+
+### Examining Candidates Donation Amounts & Means
+After exploring candidate donations by certain buckets, I revised the bar graph to better visualized the amount of donations recevied for the top 4 candidates.
+
+```{r echo=FALSE,message=FALSE,warning=FALSE, Bivariate_Plots}
+#donation buckets and candidates 
+ggplot(aes(x=donation_level, fill=cand_nm), data=tx) + geom_bar(stat='count') + scale_y_sqrt()
+
+#edited for top four candidates only
+ggplot(aes(x=donation_level, fill=cand_nm), data=subset(tx, cand_nm == c("Trump, Donald J.",'Clinton, Hillary Rodham', "Cruz, Rafael Edward 'Ted'", 'Sanders, Bernard'))) + geom_bar(stat='count') + scale_y_sqrt()
+
+```
+
+I also included box plot of the candidates that show summaries of their contribution amounts. Applied log10 to the y axis to easily compare the ranges of donation amounts. Some findings include Donald Trump having the highest donation value median. This was expected since Donald Trump was receiving higher valued donations in greater numbers than lower valued ones. 
+
+```{r echo=FALSE,message=FALSE, warning=FALSE}
+
+#donations by candidates boxplot
+ggplot(aes(x=cand_nm, y=contb_receipt_amt), data=subset(tx, cand_nm == c("Trump, Donald J.",'Clinton, Hillary Rodham', "Cruz, Rafael Edward 'Ted'", 'Sanders, Bernard') & contb_receipt_amt > 0)) + geom_boxplot() + scale_y_log10()
+```
+
+The plots below explore means donations and number of donations, after accounting for the different candidates. Correlation for the two variables was -0.383, which can indicate a small correlation. As number of donations increased, mean_donation decreased.
+
+```{r echo=FALSE,message=FALSE, warning=FALSE}
+
+#zoomed in + geom_smooth line
+ggplot(aes(x=number_of_donations, y=mean_donation), data=tx_candidates) + geom_point() + scale_y_log10() +
+  geom_smooth(method='lm', color=I('red'))
+
+cor.test(tx_candidates$number_of_donations, tx_candidates$mean_donation, method='pearson')
+#-0.38389  meaningful but small correlation. 
+
+```
+
+### Examining Cities' Donation Amounts & Means
+Instead of accounting for candidates as I did in the previous plot, I wanted explore if the same negative trend occurred when I accounted for the different cities. In this plot, the calculated correlation was much smaller at -0.0088. 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#cities # of donations & means 
+
+ggplot(aes(x=number_of_donations, y=mean_donation), data=tx_cities) + geom_point(alpha=1/20, color=I('purple')) + coord_cartesian(ylim=c(0,1050)) + scale_x_log10()
+
+cor.test(tx_cities$number_of_donations, tx_cities$mean_donation, method='pearson')
+# cor value -0.008886173
+```
+
+### Cities Support for Presidential Candidates
+It was determined earlier that Hillary Clinton received majority of the donations, with Donald Trump coming fourth. Since these two candidates were opponets in the Presidential election, I wanted to further explore the breakdown by Texan cities. 
+
+```{r echo=FALSE, warning=FALSE}
+#cities and candidates'
+p1<-ggplot(aes(x=contbr_city, y=hc_support), data=subset(tx_cities, number_of_donations>2500)) + geom_bar(stat='identity') + theme(axis.text.x = element_text(angle=90)) +
+  ggtitle('Cities Support for Hillary Clinton')
+
+p2 <- ggplot(aes(x=contbr_city, y=dt_support), data=subset(tx_cities, number_of_donations>2500)) + geom_bar(stat='identity') + theme(axis.text.x = element_text(angle=90)) +
+  ggtitle('Cities Support for Donald Trump')
+
+grid.arrange(p1,p2, ncol=1)
+```
+
+Mean donations for Hillary Clinton and Donald Trump:
+
+```{r echo=FALSE}
+
+mean(tx_cities$hc_support)
+mean(tx_cities$dt_support)
+```
+
+### Contributions based on Occupation 
+I was eager to visualize the relationship between total_employees and contributions_total. This is becuase different occupations have varying salaries and impact how much an individual contributes, for example teachers would have less to contribute than a CEO. To my surprise, the plot displayed that as total_employees increased, so did the contribution_total (with a correlation of 0.9295151).
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#most contributions
+
+ggplot(aes(x=total_employees, y=contributions_total), data=subset(tx_occupations, !is.na(contbr_occupation))) + geom_point()
+
+ggplot(aes(x=total_employees, y=contributions_total), data=subset(tx_occupations, !is.na(contbr_occupation))) + geom_jitter(alpha=1/20, color=I('#0878C1')) +
+  scale_x_log10() + scale_y_log10()
+
+cor.test(tx_occupations$total_employees, tx_occupations$contributions_total, method='pearson')
+```
+
+# Bivariate Analysis
+
+#### Talk about some of the relationships you observed in this part of the investigation. How did the feature(s) of interest vary with other features in the dataset? Did you observe any interesting relationships between the other features (not the main feature(s) of interest)? What was the strongest relationship you found?
+I wanted to measure how number of donations & mean donations were influenced when accounting for a particular candidate or a contributors city. In the candidates, there was a small but meaningful relationship between the two variables. As number of donations increased, mean donations decreased for candidates. A possible explanation for this is that low-value donations are occurring at higher numbers versus one high-valued donation. This was also examined earlier in the analysis, when it was determined majority of donations were $200 or less. When measuring the same variables but accounting for different cities, another pattern was produced. The correlation was closer to 0, and majority of the mean donation values were 250 or less, despite number of donations made. 
+
+Another set of variables I examined were cities support for particular candidates. It was determined earlier that Houston, Austin, and Dallas had the highest number of donations, but I wanted to explore in favor of which candidate. To my surprise, for each of those cities, contributor's donated substantially more to Hillary Cliniton than Donald Trump - despite Donald Trump winning the popular vote in Texas. 
+Lastly, I create a scatter plot for number of employees per occupation vs. the total contributions made. Log10 x & y scales were applied to better visualize the data, and the plot showed how as total employees increased, so did the contribution amount. There was a 0.92 pearson correlation for the trend.
+
+# Multivariate Plots Section
+
+###Occupation, Number of Donations, & Total Number of Employees
+I took the last bivariate plot and applied the number of donations variable  to examine if it could explain the high correlation between contribution totals and total employees. I did not apply the alpha parameter, to better visualize the color ranges on the plot. It is apparent that number of donations did not have much impact on the variables since there is such little variation of colors.
+
+
+```{r echo=FALSE,warning=FALSE, Multivariate_Plots}
+ggplot(aes(x=total_employees, y=contributions_total, color=number_of_donations), data=subset(tx_occupations, !is.na(contbr_occupation))) + geom_jitter() + scale_x_log10() + scale_y_log10() + theme_minimal()
+```
+
+###Number of Donations and Mean Donation Per City
+For each city, I want to see what the mean_donation & it's relationship with the number of donations. Houston had the most donations but a lower mean than Dallas. 
+
+```{r echo=FALSE,warning=FALSE,message=FALSE}
+
+ ggplot(aes(x=contbr_city, y=number_of_donations, fill=mean_donation), data=subset(tx_cities, number_of_donations>3500)) + geom_bar(stat='identity') + theme(axis.text.x = element_text(angle=90))
+
+```
+
+# Multivariate Analysis
+
+#### Talk about some of the relationships you observed in this part of the investigation. Were there features that strengthened each other in terms of looking at your feature(s) of interest?
+
+For the first graph, the variables investigated were total_employees, contribution_total, and number_of_donations. In the last section, total_employees and contribution_total were determined to have a strong relationship, and I wanted to see if the number_of_donations had any influence. Upon further examination, there was very little variation in color (relation to number_of_donations) which meant there was little influence by the variable. 
+
+#### Were there any interesting or surprising interactions between features?
+
+The second graph analyzed number_of_donations, contbr_city, and mean_donation. I was surprised to see much variation between number_of_donations and mean_donations. For example, Houston had the most donations, but had a higher mean than Austin (which came second in number od donations). I would be eager to compare this graph with mean salaries for individual cities in Texas.  
+
+------
+
+# Final Plots and Summary
+
+### Plot One
+```{r echo=FALSE, message=FALSE, warning=FALSE, Plot_One}
+
+ggplot(aes(x=donation_level, fill=cand_nm), data=subset(tx, cand_nm == c("Trump, Donald J.",'Clinton, Hillary Rodham', "Cruz, Rafael Edward 'Ted'", 'Sanders, Bernard'))) + 
+  geom_bar(stat='count') + 
+  scale_y_sqrt() +
+  ggtitle("Donation Values for each Candidate") + 
+  labs(x = 'Donation Values', y = "Amount of Donations") + 
+  scale_fill_discrete(name="Top 4\nCandidates:") +
+  theme_minimal() + theme(axis.text.x = element_text(angle=90))
+```
+
+### Description One
+This bar graph examines how much each candidate received of the different donation values. The donation amount most given by contributors were $200 and Under, and Hillary Clinton and Ted Cruz were the top 2 candidates receiving these donation types. Ted Cruz and Hillary Clinton continue to be popular candidates to receive donations, however Donald Trump recieved the most donations valued $200.01-499 than the other candidates - even though they were substantially less occurring. In all four bars, Bernie Sanders does not receive the most donations, however Bernie Sanders received more donations than Donald Trump when totaling donations. 
+
+### Plot Two
+```{r echo=FALSE, warning=FALSE, message=FALSE, Plot_Two}
+
+ggplot(aes(x=total_employees, y=contributions_total), data=subset(tx_occupations, !is.na(contbr_occupation))) +
+  geom_jitter(alpha=1/20, color=I("#40AA2A")) + 
+  scale_x_log10(breaks = trans_breaks("log10", function(x) 10^x),labels = trans_format("log10", math_format(10^.x))) + 
+  scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x),labels = trans_format("log10", math_format(10^.x))) +
+  geom_smooth(method='lm', color=I('black'), linetype=2) + 
+  ggtitle("Total Number of Employees vs. Total Amount of Donations") + labs(x = 'Total Number of Employees', y = "Total Donations Amount ($)") +
+  theme_light()
+
+```
+
+### Description Two
+The plot examines the relationship between number of employees and number of donations made in a given occupation. As the number of employees in a profession increased, the total donation amount also increased. It's important to note that all occupations were included (of varying salaries) when making the plot, which could mean that salaries did not influence donation amount. More data regarding contributor's salary would be required to formalize this finding. 
+
+### Plot Three
+```{r echo=FALSE, message=FALSE, warning=FALSE, Plot_Three}
+
+ggplot(aes(x=contbr_city, y=number_of_donations, fill=mean_donation), data=subset(tx_cities, number_of_donations>3500)) + geom_bar(stat='identity') + labs(fill= "Mean Donation ($)", x = 'City Name', y = "Total Number of Donations", title='Total Donations and Mean Donations by Texan Cities') + theme_bw()+ theme(axis.text.x = element_text(angle=90))
+
+```
+
+### Description Three
+The final variable that was explored further were Texan cities. Total donations and mean donations were examined for each city. While understanding each city has unique population counts and cultures, the results showed that cities contributed different number of donations and had varying means. Midland, for example, had under 5000 donations, but mean donation amount was around $300. Houston, on the other hand, had over 60,000 donations but it's mean donation was around $200. 
+
+------
+
+# Reflection
+When conducting my analysis, I initially ran into some difficulties dealing with mostly qualitative data. The cities, candidates, contributor names, and contributor occupations are some of the variables I had extensive data on. I found a lot of success when I created the new "donation_level" variable to group the various donation amounts. It was easier to conduct analysis across the other variables with a cleaned variable. That data could be enriched with additional information about the contributors, such as salary amount and usual poltical alliance. I would not be surprised if usual Republican voters, voted for Hillary Clinton for this particular election. 
+
+#Sources:
+http://www.270towin.com/states/Texas
+http://fec.gov/disclosurep/pnational.do 
