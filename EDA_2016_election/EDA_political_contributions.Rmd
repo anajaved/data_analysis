@@ -59,8 +59,16 @@ The bar graph displays the amount of donations each candidate received. Candidat
 
 ```{r echo=FALSE}
 #candidates bar graph
-ggplot(aes(x=cand_nm, y=number_of_donations), data=subset(tx_candidates, number_of_donations>1000)) +
-  geom_bar(stat='identity') + theme(axis.text.x = element_text(margin = margin(r =10 , b=10, l=10, t=0), angle=90))
+ggplot(aes(x=cand_nm, 
+           y=number_of_donations), 
+       data=subset(tx_candidates, 
+                   number_of_donations>1000)) +
+  geom_bar(stat='identity') + 
+  theme(axis.text.x = element_text(margin = margin(r =10 , 
+                                                   b=10, 
+                                                   l=10, 
+                                                   t=0), 
+                                   angle=90))
 
 tail(sort(summary(tx$cand_nm)), 11)
 #top 11 candidates: 'Kasich, John R.', 'Johnson, Gary', 'Fiorina, Carly','Paul, Rand','Bush, Jeb', 'Rubio, Marco', 'Carson, Benjamin S.', 
@@ -72,8 +80,16 @@ The top cities were donations were most made included: Houston, Austin, Dallas, 
 
 ```{r echo=FALSE}
 #cities bar graph
-  ggplot(aes(x=contbr_city, y=number_of_donations), data=subset(tx_cities, number_of_donations>3500)) +
-  geom_bar(stat='identity') + theme(axis.text.x = element_text(margin = margin(r =10 , b=10, l=10, t=0), angle=90))
+  ggplot(aes(x=contbr_city, 
+             y=number_of_donations), 
+         data=subset(tx_cities, 
+                     number_of_donations>3500)) +
+  geom_bar(stat='identity') + 
+  theme(axis.text.x = element_text(margin = margin(r =10 , 
+                                                   b=10, 
+                                                   l=10, 
+                                                   t=0), 
+                                   angle=90))
        
 tail(sort(summary(tx$contbr_city)), 20)
 #top 15 cities:  HOUSTON, AUSTIN, DALLAS, SAN ANTONIO, FORT WORTH, PLANO, SPRING, EL PASO, ARLINGTON,KATY,LUBBOCK, SUGAR LAND, CORPUS 
@@ -105,10 +121,17 @@ tx$donation_level <- as.factor(tx$donation_level)
 
 #ordering donation factors 
 tx$donation_level <- factor(tx$donation_level, levels =
-                              c("$200 and Under","$200.1 -499" ,"$500-999","$1000-1999","$2000 and over", ordered=T))
+                              c("$200 and Under",
+                                "$200.1 -499" ,
+                                "$500-999",
+                                "$1000-1999",
+                                "$2000 and over", 
+                                ordered=T))
 
 #donations buckets histogram
-ggplot(aes(x=donation_level), data=tx) + geom_bar(stat='count') + scale_y_sqrt()
+ggplot(aes(x=donation_level), data=tx) + 
+  geom_bar(stat='count') + 
+  scale_y_sqrt()
 
 summary(tx$donation_level)
 
@@ -119,7 +142,11 @@ It is apparent that the top 5 candidates receiving donations valued $200 or less
 
 ```{r echo=FALSE}
 #donations to candidates under 200:
-ggplot(aes(x=cand_nm), data=subset(tx, donation_level =='$200 and Under')) + geom_bar(stat='count') + coord_flip()
+ggplot(aes(x=cand_nm), 
+       data=subset(tx, 
+                   donation_level =='$200 and Under')) + 
+  geom_bar(stat='count') + 
+  coord_flip()
 ```
 
 Donations between $200.1-499:
@@ -127,7 +154,10 @@ For donations valued higher, Donald Trump (R) received the most with Hillary Cli
 
 ```{r echo=FALSE}
 #candidate donations 200-499
-ggplot(aes(x=cand_nm), data=subset(tx, donation_level =='$200.1 -499')) + geom_bar(stat='count') + coord_flip()
+ggplot(aes(x=cand_nm), 
+       data=subset(tx, 
+                   donation_level =='$200.1 -499')) + 
+  geom_bar(stat='count') + coord_flip()
 ```
 
 Donations between $500-999:
@@ -135,7 +165,11 @@ With higher donation amounts, Donald Trump (R), Ted Cruz (R), and Hillary Clinto
 
 ```{r echo=FALSE}
 #candidate donations 500-999
-ggplot(aes(x=cand_nm), data=subset(tx, donation_level =='$500-999')) + geom_bar(stat='count') + coord_flip()
+ggplot(aes(x=cand_nm), 
+       data=subset(tx, 
+                   donation_level =='$500-999')) + 
+  geom_bar(stat='count') + 
+  coord_flip()
 ```
 
 Donations between $1000-1999:
@@ -143,7 +177,11 @@ It is important to notice that donations to Donald Trump(R) have decreased, with
 
 ```{r echo=FALSE} 
 #candidate donations $1000-1999
-ggplot(aes(x=cand_nm), data=subset(tx, donation_level =='$1000-1999')) + geom_bar(stat='count') + coord_flip()
+ggplot(aes(x=cand_nm), 
+       data=subset(tx, 
+                   donation_level =='$1000-1999')) +
+  geom_bar(stat='count') + 
+  coord_flip()
 ```
 
 Donations over $2000:
@@ -151,7 +189,11 @@ Ted Cruz(R) and Hillary Clinton(D) remain close in donations in this category as
 
 ```{r echo=FALSE} 
 #candidate donations $2000 and over
-ggplot(aes(x=cand_nm), data=subset(tx, donation_level =='$2000 and over')) + geom_bar(stat='count') + coord_flip()
+ggplot(aes(x=cand_nm),
+       data=subset(tx, 
+                   donation_level =='$2000 and over')) + 
+  geom_bar(stat='count') + 
+  coord_flip()
 ```
 
 ### Breakdown by Contributors:
@@ -165,13 +207,26 @@ tx_contributors <- tx %>%
   summarise(contributions_total = sum(contb_receipt_amt),
             number_of_donations= length(contb_receipt_amt))
 
-ggplot(aes(x=number_of_donations), data=tx_contributors) + geom_bar(stat='count') + 
-  theme(axis.text.x = element_text(margin = margin(r =10 , b=10, l=10, t=0), angle=90))
+ggplot(aes(x=number_of_donations), 
+       data=tx_contributors) + 
+  geom_bar(stat='count') + 
+  theme(axis.text.x = element_text(margin = margin(r =10 ,
+                                                   b=10, 
+                                                   l=10, 
+                                                   t=0), 
+                                   angle=90))
 
 
-ggplot(aes(x=number_of_donations), data=tx_contributors) + geom_bar(stat='count') + 
-  theme(axis.text.x = element_text(margin = margin(r =10 , b=10, l=10, t=0), angle=90)) + 
-  coord_cartesian(xlim=c(0,100)) + scale_y_log10()
+ggplot(aes(x=number_of_donations), 
+       data=tx_contributors) + 
+  geom_bar(stat='count') + 
+  theme(axis.text.x = element_text(margin = margin(r =10 ,
+                                                   b=10, 
+                                                   l=10, 
+                                                   t=0), 
+                                   angle=90)) + 
+  coord_cartesian(xlim=c(0,100)) + 
+  scale_y_log10()
 
 ```
 
@@ -187,9 +242,13 @@ tx_occupations <- tx %>%
             total_employees= length(contbr_occupation),
             number_of_donations= length(unique(contb_receipt_amt)))
 
-ggplot(aes(x=contbr_occupation, y=total_employees), data=subset(tx_occupations, total_employees>2000 &
-                                                                  !is.na(contbr_occupation) & tx_occupations !='INFORMATION REQUESTED PER BEST EFFORTS' )) + 
-  geom_bar(stat='identity') + scale_y_sqrt() + coord_flip()
+ggplot(aes(x=contbr_occupation, 
+           y=total_employees), data=subset(tx_occupations, 
+                                           total_employees>2000 & !is.na(contbr_occupation) 
+                   & tx_occupations !='INFORMATION REQUESTED PER BEST EFFORTS' )) + 
+  geom_bar(stat='identity') + 
+  scale_y_sqrt() + 
+  coord_flip()
 
 
 head(summary(tx$contbr_occupation), 10)
@@ -218,12 +277,20 @@ After exploring candidate donations by certain buckets, I revised the bar graph 
 
 ```{r echo=FALSE,message=FALSE,warning=FALSE, Bivariate_Plots}
 #donation buckets and candidates 
-ggplot(aes(x=donation_level, fill=cand_nm), data=tx) + geom_bar(stat='count') + scale_y_sqrt()
+ggplot(aes(x=donation_level, fill=cand_nm), 
+       data=tx) + 
+  geom_bar(stat='count') + 
+  scale_y_sqrt() + 
+  theme(axis.text.x  = element_text(angle=90))
 
 #edited for top four candidates only
-ggplot(aes(x=donation_level, fill=cand_nm), data=subset(tx, cand_nm == 
-                                                          c("Trump, Donald J.",'Clinton, Hillary Rodham', "Cruz, Rafael Edward 'Ted'", 'Sanders, Bernard'))) +
-  geom_bar(stat='count', position="dodge") + scale_y_sqrt()
+ggplot(aes(x=donation_level, fill=cand_nm), 
+       data=subset(tx, cand_nm == c("Trump, Donald J.",
+                                    'Clinton, Hillary Rodham', 
+                                    "Cruz, Rafael Edward 'Ted'", 
+                                    'Sanders, Bernard'))) +
+  geom_bar(stat='count', position="dodge") + 
+  scale_y_sqrt()
 
 ```
 
@@ -232,13 +299,22 @@ I also included box plot and a histogram of the contribution amounts for the top
 ```{r echo=FALSE,message=FALSE, warning=FALSE}
 
 #donations by candidates boxplot
-ggplot(aes(x=cand_nm, y=contb_receipt_amt), data=subset(tx, cand_nm == 
-                                                          c("Trump, Donald J.",'Clinton, Hillary Rodham', "Cruz, Rafael Edward 'Ted'", 
-                                                            'Sanders, Bernard') & contb_receipt_amt > 0)) + geom_boxplot() + scale_y_log10()
+ggplot(aes(x=cand_nm, 
+           y=contb_receipt_amt), 
+       data=subset(tx, cand_nm == c("Trump, Donald J.",
+                                    'Clinton, Hillary Rodham', 
+                                    "Cruz, Rafael Edward 'Ted'",
+                                    'Sanders, Bernard') & contb_receipt_amt > 0)) +
+  geom_boxplot() + 
+  scale_y_log10()
 
-ggplot(aes(x=cand_nm, y=contb_receipt_amt, fill=I("#550000")), data=subset(tx, cand_nm == 
-                                                          c("Trump, Donald J.",'Clinton, Hillary Rodham', "Cruz, Rafael Edward 'Ted'", 
-                                                            'Sanders, Bernard') & contb_receipt_amt > 0)) +  geom_bar(stat="identity")
+ggplot(aes(x=cand_nm, 
+           y=contb_receipt_amt, fill=I("#550000")), data=subset(tx, 
+                                                                cand_nm == c("Trump, Donald J.",
+                                                                             'Clinton, Hillary Rodham', 
+                                                                             "Cruz, Rafael Edward 'Ted'",
+                                                                             'Sanders, Bernard') & contb_receipt_amt > 0)) +  
+  geom_bar(stat="identity")
 
 ```
 
@@ -247,7 +323,11 @@ The plots below explore means donations and number of donations, after accountin
 ```{r echo=FALSE,message=FALSE, warning=FALSE}
 
 #zoomed in + geom_smooth line
-ggplot(aes(x=number_of_donations, y=mean_donation), data=tx_candidates) + geom_point() + scale_y_log10() +
+ggplot(aes(x=number_of_donations, 
+           y=mean_donation), 
+       data=tx_candidates) + 
+  geom_point() + 
+  scale_y_log10() +
   geom_smooth(method='lm', color=I('red'))
 
 cor.test(tx_candidates$number_of_donations, tx_candidates$mean_donation, method='pearson')
@@ -261,8 +341,12 @@ Instead of accounting for candidates as I did in the previous plot, I wanted exp
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 #cities # of donations & means 
 
-ggplot(aes(x=number_of_donations, y=mean_donation), data=tx_cities) + geom_point(alpha=1/20, color=I('purple')) +
-  coord_cartesian(ylim=c(0,1050)) + scale_x_log10()
+ggplot(aes(x=number_of_donations, 
+           y=mean_donation), 
+       data=tx_cities) + 
+  geom_point(alpha=1/20, color=I('purple')) +
+  coord_cartesian(ylim=c(0,1050)) + 
+  scale_x_log10()
 
 cor.test(tx_cities$number_of_donations, tx_cities$mean_donation, method='pearson')
 # cor value -0.008886173
@@ -273,11 +357,17 @@ It was determined earlier that Hillary Clinton received majority of the donation
 
 ```{r echo=FALSE, warning=FALSE}
 #cities and candidates'
-p1<-ggplot(aes(x=contbr_city, y=hc_support), data=subset(tx_cities, number_of_donations>2500)) + geom_bar(stat='identity') +
+p1<-ggplot(aes(x=contbr_city, 
+               y=hc_support), 
+           data=subset(tx_cities, number_of_donations>2500)) + 
+  geom_bar(stat='identity') +
   theme(axis.text.x = element_text(angle=90)) +
   ggtitle('Cities Support for Hillary Clinton')
 
-p2 <- ggplot(aes(x=contbr_city, y=dt_support), data=subset(tx_cities, number_of_donations>2500)) + geom_bar(stat='identity') +
+p2 <- ggplot(aes(x=contbr_city, 
+                 y=dt_support), 
+             data=subset(tx_cities, number_of_donations>2500)) + 
+  geom_bar(stat='identity') +
   theme(axis.text.x = element_text(angle=90)) +
   ggtitle('Cities Support for Donald Trump')
 
@@ -298,11 +388,18 @@ I was eager to visualize the relationship between total_employees and contributi
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 #most contributions
 
-ggplot(aes(x=total_employees, y=contributions_total), data=subset(tx_occupations, !is.na(contbr_occupation))) + geom_point()
+ggplot(aes(x=total_employees, 
+           y=contributions_total), 
+       data=subset(tx_occupations, !is.na(contbr_occupation))) + 
+  geom_point()
 
-ggplot(aes(x=total_employees, y=contributions_total), data=subset(tx_occupations, !is.na(contbr_occupation)))+ 
+
+ggplot(aes(x=total_employees, 
+           y=contributions_total), 
+       data=subset(tx_occupations, !is.na(contbr_occupation)))+ 
   geom_jitter(alpha=1/20, color=I('#0878C1')) +
-  scale_x_log10() + scale_y_log10()
+  scale_x_log10() + 
+  scale_y_log10()
 
 cor.test(tx_occupations$total_employees, tx_occupations$contributions_total, method='pearson')
 ```
@@ -322,8 +419,13 @@ I took the last bivariate plot and applied the number of donations variable  to 
 
 
 ```{r echo=FALSE,warning=FALSE, Multivariate_Plots}
-ggplot(aes(x=total_employees, y=contributions_total, color=number_of_donations), data=subset(tx_occupations, !is.na(contbr_occupation))) +
-  geom_jitter() + scale_x_log10() + scale_y_log10() + theme_minimal()
+ggplot(aes(x=total_employees, 
+           y=contributions_total, color=number_of_donations), 
+       data=subset(tx_occupations, !is.na(contbr_occupation))) +
+  geom_jitter() + 
+  scale_x_log10() + 
+  scale_y_log10() + 
+  theme_minimal()
 ```
 
 ###Number of Donations and Mean Donation Per City
@@ -331,8 +433,12 @@ For each city, I want to see what the mean_donation & it's relationship with the
 
 ```{r echo=FALSE,warning=FALSE,message=FALSE}
 
-ggplot(aes(x=contbr_city, y=number_of_donations, fill=mean_donation), data=subset(tx_cities, number_of_donations>3500)) +
-  geom_bar(stat='identity') + theme(axis.text.x = element_text(angle=90))
+ggplot(aes(x=contbr_city, 
+           y=number_of_donations, fill=mean_donation), 
+       data=subset(tx_cities, 
+                   number_of_donations>3500)) +
+  geom_bar(stat='identity') + 
+  theme(axis.text.x = element_text(angle=90))
 
 ```
 
@@ -353,9 +459,11 @@ The second graph analyzed number_of_donations, contbr_city, and mean_donation. I
 ### Plot One
 ```{r echo=FALSE, message=FALSE, warning=FALSE, Plot_One}
 
-ggplot(aes(x=donation_level, fill=cand_nm), data=subset(tx, 
-                                                        cand_nm == c("Trump, Donald J.",'Clinton, Hillary Rodham', 
-                                                                     "Cruz, Rafael Edward 'Ted'", 'Sanders, Bernard'))) + 
+ggplot(aes(x=donation_level, fill=cand_nm), 
+       data=subset(tx,cand_nm == c("Trump, Donald J.",
+                                   'Clinton, Hillary Rodham',
+                                   "Cruz, Rafael Edward 'Ted'", 
+                                   'Sanders, Bernard'))) + 
   geom_bar(stat='count', position='dodge') + 
   scale_y_sqrt() +
   ggtitle("Donation Values for each Candidate") + 
@@ -370,13 +478,22 @@ This bar graph examines how much each candidate received of the different donati
 ### Plot Two
 ```{r echo=FALSE, warning=FALSE, message=FALSE, Plot_Two}
 
-ggplot(aes(x=total_employees, y=contributions_total), data=subset(tx_occupations, !is.na(contbr_occupation))) +
+ggplot(aes(x=total_employees, 
+           y=contributions_total), 
+       data=subset(tx_occupations, !is.na(contbr_occupation))) +
   geom_jitter(alpha=1/20, color=I("#40AA2A")) + 
-  scale_x_log10(breaks = trans_breaks("log10", function(x) 10^x),labels = trans_format("log10", math_format(10^.x))) + 
-  scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x),labels = trans_format("log10", math_format(10^.x))) +
+  scale_x_log10(breaks = trans_breaks("log10", 
+                                      function(x) 10^x),
+                labels = trans_format("log10", 
+                                      math_format(10^.x))) + 
+  scale_y_log10(breaks = trans_breaks("log10", 
+                                      function(x) 10^x),
+                labels = trans_format("log10", 
+                                      math_format(10^.x))) +
   geom_smooth(method='lm', color=I('black'), linetype=2) + 
-  ggtitle("Total Number of Employees vs. Total Amount of Donations") + labs(x = 'Total Number of Employees', 
-                                                                            y = "Total Donations Amount ($)") +
+  ggtitle("Total Number of Employees vs. Total Amount of Donations") + 
+  labs(x = 'Total Number of Employees', 
+       y = "Total Donations Amount ($)") +
   theme_light()
 
 ```
@@ -387,10 +504,13 @@ The plot examines the relationship between number of employees and number of don
 ### Plot Three
 ```{r echo=FALSE, message=FALSE, warning=FALSE, Plot_Three}
 
-ggplot(aes(x=contbr_city, y=number_of_donations, fill=mean_donation), data=subset(tx_cities, number_of_donations>3500)) +
+ggplot(aes(x=contbr_city, 
+           y=number_of_donations, fill=mean_donation), 
+       data=subset(tx_cities, number_of_donations>3500)) +
   geom_bar(stat='identity') + 
-  labs(fill= "Mean Donation ($)", x = 'City Name', y = "Total Number of Donations", 
-                                   title='Total Donations and Mean Donations by Texan Cities') + 
+  labs(fill= "Mean Donation ($)", x = 'City Name', 
+       y = "Total Number of Donations",
+       title='Total Donations and Mean Donations by Texan Cities') + 
   theme_bw()+ coord_flip()
   
 
