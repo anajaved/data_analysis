@@ -18,9 +18,6 @@ from tester import dump_classifier_and_data
 ### features_list is a list of strings, each of which is a feature name.
 ### The first feature is "poi".
 
-
-outliers = ['TOTAL', 'LOCKHART EUGENE E', 'THE TRAVEL AGENCY IN THE PARK']
-
 ### Load the dictionary containing the dataset
 ### Task 2: Remove outliers, create visualizations
 ### Task 3: Create new feature 
@@ -28,7 +25,13 @@ outliers = ['TOTAL', 'LOCKHART EUGENE E', 'THE TRAVEL AGENCY IN THE PARK']
 with open("final_project_dataset.pkl", "r") as data_file:
     data_dict = pickle.load(data_file)
 
+
+outliers = ['TOTAL', 'LOCKHART EUGENE E', 'THE TRAVEL AGENCY IN THE PARK']
+
 for point in data_dict.items():
+    '''if (point[1]['deferred_income'] == 'NaN') and (point[1]['salary']== 'NaN') and (point[1]['total_payments'] == 'NaN') and (point[1]['total_stock_value'] == 'NaN'):
+        print point''' #finding Lockhart outlier
+        
     if point[0] in outliers:
         data_dict.pop(point[0])
     
@@ -41,7 +44,7 @@ for point in data_dict.items():
     point[1]["sb_ratio"]=sb_ratio
     point[1]['ss_ratio']=ss_ratio
     
-    plt.scatter(sb_ratio, shared_email )
+    plt.scatter(sb_ratio, shared_email)
     
 #plt.show()
 
@@ -50,7 +53,6 @@ features_list = ['poi', 'salary',
 'deferred_income', 'total_stock_value', 'exercised_stock_options', 
 'long_term_incentive', 'restricted_stock' ,
  'shared_receipt_with_poi', 'from_poi_to_this_person'] 
-
     
 df = pd.DataFrame.from_records(list(data_dict.values()))
 df.set_index(pd.Series(list(data_dict.keys())), inplace=True) 
