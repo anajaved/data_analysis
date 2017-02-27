@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<meta charset="utf-8">
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+  	<script src="http://dimplejs.org/dist/dimple.v2.0.0.min.js"></script>
+
+  	<style>
+  	h2 {
+        text-align: center;
+        }
+
+  	</style>
+
+	<script type="text/javascript"> 
+
+		function draw(data) {
+        "use strict";
+        var margin = 75,
+            width = 1400 - margin,
+            height = 600 - margin;
+
+        d3.select('body')
+            .append('h2')
+            .text('Titanic Passengers Who Survived');
+
+        var svg = d3.select("body")
+            .append("svg")
+            	.attr("width", width + margin)
+            	.attr("height", height + margin)
+            .append('g')
+            	.attr('class', 'chart');
+
+
+
+        var myChart = new dimple.chart(svg, data);
+      myChart.setBounds(65, 45, 505, 315)
+      myChart.addCategoryAxis("x", "Sex");
+      myChart.addPctAxis("y", "Survived");
+      myChart.addSeries("Pclass", dimple.plot.bar);
+      myChart.addLegend(200, 10, 380, 20, "right");
+      myChart.draw();
+        }; 
+
+	</script> 
+</head>
+
+<body>
+
+	<script type="text/javascript">
+	d3.csv("titanic_data.csv", draw);
+	</script> 
+
+</body>
+</html>
