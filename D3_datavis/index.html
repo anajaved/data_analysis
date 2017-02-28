@@ -1,3 +1,5 @@
+<!-- http://bl.ocks.org/anajaved/raw/5f91e831c60043108ace189dfe861daf/ -->
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,23 +9,61 @@
     <script src="http://dimplejs.org/dist/dimple.v2.0.0.min.js"></script>
 
     <style>
+    /* title styling */
     h2 {
         text-align: center;
+        text-decoration: underline;
         }
 
     </style>
 
     <script type="text/javascript"> 
 
-        function draw(data) {
+    function draw(data) {
         "use strict";
         var margin = 75,
             width = 1000 - margin,
             height = 600 - margin;
 
+        data = data.filter( function( row ) {
+                    if( row.Embarked != "" ) {
+                        return row;
+                    };
+                });
+
+        // organizing the data
+
+        data.forEach(function( d ) {
+                    if( 0 <= d.Age && d.Age <= 18 ) {
+                        d.agegroup = "Child";
+                    } else if( 18 < d.Age && d.Age <= 59 ) {
+                        d.agegroup = "Adult";
+                    } else if( 60 < d.Age && d.Age <= 130 ) {
+                        d.agegroup = "Elderly";
+                    } else {d.agegroup= "No Age"} 
+                } );
+
+        data.forEach(function( d ) {
+                    if( d.Embarked === "S" ) {
+                        d.locationgroup = "Southampton";
+                    } else if( d.Embarked === "Q" ) {
+                        d.locationgroup = "Queenstown";
+                    } else if( d.Embarked === "C") {
+                        d.locationgroup = "Cherbourg";
+                    } });
+
+        data = data.filter( function( row ) {
+                    if(row.agegroup != "" ) {
+                        return row;
+                    };
+                });
+
+        // creating the chart 
+
         d3.select('body')
             .append('h2')
-            .text('Titanic Survival Rates');
+            .text('Titanic Passengers who Survived:');
+
 
         var svg = d3.select("body")
             .append("svg")
@@ -33,23 +73,58 @@
                 .attr('class', 'chart');
 
 
-
         var the_chart = new dimple.chart(svg, data);
-        the_chart.addCategoryAxis("x", "Pclass");
-        the_chart.addMeasureAxis("y", "Survived");
-        the_chart.addSeries("Embarked", dimple.plot.bar);
-        the_chart.addLegend(200,10, 380, 20, "left");
-        the_chart.draw()
-        }; 
+        var x= the_chart.addCategoryAxis("x", "Pclass");
+        var y= the_chart.addMeasureAxis("y", "Survived");
+        the_chart.addSeries("locationgroup", dimple.plot.bar);
+        the_chart.addLegend(100,20, 800, 30, "left");
+        x.title= "Socioeconomic Class (1- Upper, 3- Lower)";
+        y.title= "Number of Survived Passengers"
+        the_chart.draw();
+    
 
-    </script> 
+        // adding functionality to buttons
+
+        var button_1 = d3.select("#btn").on("click", function() {
+            the_chart.addSeries("Sex", dimple.plot.bar)
+            the_chart.draw(750); 
+        });
+
+        var button_2 = d3.select("#btn2").on("click", function() {
+            the_chart.addSeries("locationgroup", dimple.plot.bar)
+            the_chart.draw(750);
+            });
+        
+        var button_3 = d3.select("#btn3").on("click", function() {
+            the_chart.addSeries("agegroup", dimple.plot.bar)
+            the_chart.draw(750);
+            });
+
+        };
+
+
+</script> 
 </head>
 
-<body>
+<body> 
 
+    <div style='display: inline-flex';>
     <script type="text/javascript">
-    d3.csv("titanic_data.csv", draw);
+    d3.csv("titanic_data.csv", draw)
+
     </script> 
+    </div> 
+
+    <!-- creating buttons \\ -->
+
+    <div id='buttons' style='display: inline-flex; margin-left:50px;'>
+    <button id="btn" style="color: white; border: 1.5px solid black; border-radius: 15px; width: 80px; height: 50px;  margin-top: 40px;">Gender Breakdown</button>
+
+    <button id="btn2" style="color: white; width: 80px; height: 50px; border: 1.5px solid black; border-radius: 15px; margin-left:5px ; margin-top: 40px; ">Location Breakdown</button>
+
+    <button id="btn3" style="color: white; width: 80px; height: 50px; border: 1.5px solid black; border-radius: 15px; margin-left:5px ; margin-top: 40px; ">Age Group Breakdown</button>
+    </div>
+
 
 </body>
 </html>
