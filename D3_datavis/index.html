@@ -77,27 +77,47 @@
         var x= the_chart.addCategoryAxis("x", "Pclass");
         var y= the_chart.addMeasureAxis("y", "Survived");
         the_chart.addSeries("locationgroup", dimple.plot.bar);
-        the_chart.addLegend(100,20, 800, 30, "left");
+        the_chart.addLegend(100,20, 950, 30, "left");
         x.title= "Socioeconomic Class (1- Upper, 3- Lower)";
         y.title= "Number of Survived Passengers"
         the_chart.draw();
-    
+    	
+    	d3.selectAll("rect")
+    		.style("opacity", 1);
 
-        // adding functionality to buttons
+        // adding functionality to buttons & style to bars
 
         var button_1 = d3.select("#btn").on("click", function() {
             the_chart.addSeries("Sex", dimple.plot.bar)
-            the_chart.draw(750); 
+            the_chart.draw(750)
+
+            d3.selectAll("rect")
+    			.style("opacity", 1); 
+
+    		d3.selectAll('.dimple-southampton, .dimple-cherbourg, .dimple-queenstown, .dimple-no-age, .dimple-adult, .dimple-child, .dimple-elderly')
+    			.remove();
         });
 
         var button_2 = d3.select("#btn2").on("click", function() {
             the_chart.addSeries("locationgroup", dimple.plot.bar)
-            the_chart.draw(750);
-            });
+            the_chart.draw(750)
+            d3.selectAll("rect")
+    			.style("opacity", 1);
+
+    		d3.selectAll('.dimple-male, .dimple-female, .dimple-no-age, .dimple-adult, .dimple-child, .dimple-elderly')
+    			.remove();
+
+    	});
         
         var button_3 = d3.select("#btn3").on("click", function() {
             the_chart.addSeries("agegroup", dimple.plot.bar)
-            the_chart.draw(750);
+            the_chart.draw(750)
+            d3.selectAll("rect")
+    			.style("opacity", 1);
+
+    		d3.selectAll('.dimple-male, .dimple-female, .dimple-southampton, .dimple-cherbourg, .dimple-queenstown')
+    			.remove();
+
             });
 
         };
