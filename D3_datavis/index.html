@@ -52,6 +52,20 @@
                         d.locationgroup = "Cherbourg";
                     } });
 
+       	data.forEach(function( d ) {
+                    if( d.Survived == 0 ) {
+                        d.Survival = "Dead";
+                    } else if( d.Survived == 1 ) {
+                        d.Survival = "Lived";
+                   
+                    } });
+
+       	data.forEach(function( d ) {
+                    if( d.Survived == 0 | d.Survived == 1 ) {
+                        d.count = 1;
+                    } });
+
+
         data = data.filter( function( row ) {
                     if(row.agegroup != "" ) {
                         return row;
@@ -62,7 +76,7 @@
 
         d3.select('body')
             .append('h2')
-            .text('Titanic Passengers who Survived:');
+            .text('Titanic Passengers by Survival');
 
 
         var svg = d3.select("body")
@@ -74,12 +88,13 @@
 
 
         var the_chart = new dimple.chart(svg, data);
-        var x= the_chart.addCategoryAxis("x", "Pclass");
-        var y= the_chart.addMeasureAxis("y", "Survived");
+        var x= the_chart.addCategoryAxis("x", ["Pclass", "Survival"]);
+        var y= the_chart.addMeasureAxis("y", "count");
         the_chart.addSeries("locationgroup", dimple.plot.bar);
         the_chart.addLegend(100,20, 950, 30, "left");
-        x.title= "Socioeconomic Class (1- Upper, 3- Lower)";
-        y.title= "Number of Survived Passengers"
+        x.title= "Socioeconomic Class (1- Upper, 3- Lower) & Survival";
+        x.titleShape
+        y.title= "Number of Passengers"
         the_chart.draw();
     	
     	d3.selectAll("rect")
