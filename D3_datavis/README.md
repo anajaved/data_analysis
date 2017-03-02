@@ -1,6 +1,8 @@
 Summary - briefly introduce your data visualization and add any context that can help readers understand it
 
-The visualization focuses on the passengers of the Titanic tragedy and explores information regarding their backgrounds, and whether they survived or not. The viewer can explore survivors's gender, age, socioeconomic class, and place of living before the trip. Viewers can click on the buttons to examine the different variables and hover over the bars to see exact values.
+The visualization focuses on the passengers of the Titanic tragedy and explores information regarding their backgrounds, and whether they survived or not. The graph allows you to explore survivors's gender, age, socioeconomic class, and place of living before the trip. Viewers can click on the buttons to examine the different variables and hover over the bars to see exact values.
+
+A common finding that can be obtained from interacting with the data is far more lower class men died as the Titanic sank. 
 
 
 Design - explain any design choices you made including changes to the visualization after collecting feedback
@@ -8,6 +10,8 @@ Design - explain any design choices you made including changes to the visualizat
 I utilized Dimple.js and D3.js to create the graph, and wanted the viewer to explore all facets of the data as possible so I incorporated interactivity with the help of the buttons. Initially my graph only examined the backgrounds of passengers who survived, however upon exploring the feedback I received from my peers, I realized having both passenger outcomes (survived and dead) on the graph was important for context. I achieved this by implementing a double bar graph. 
 
 I also ensured to only display certain colors pertaining to the graph in the legend. Initially all the legend colors were on display as the user jumped between graphs, however I acknowledged that this can be confusing and made the appropriate changes. 
+
+Finally, I changed the opacity of the bars to prevent any confusion on where the lines began and ended. 
 
 
 Feedback - include all feedback you received from others on your visualization 
