@@ -7,11 +7,11 @@ A common finding that can be obtained from interacting with the data is far more
 
 Design - explain any design choices you made including changes to the visualization after collecting feedback
 
-I utilized Dimple.js and D3.js to create the graph, and wanted the viewer to explore all facets of the data as possible so I incorporated interactivity with the help of the buttons. Initially my graph only examined the backgrounds of passengers who survived, however upon exploring the feedback I received from my peers, I realized having both passenger outcomes (survived and dead) on the graph was important for context. I achieved this by implementing a double bar graph. 
+I utilized Dimple.js and D3.js to create the graph, and wanted the viewer to explore all facets of the data as possible so I incorporated interactivity with the help of the buttons. A bar chart was chosen for it's ability to highlight individual data values and display comparisons between various passenger survial factors. 
 
-I also ensured to only display certain colors pertaining to the graph in the legend. Initially all the legend colors were on display as the user jumped between graphs, however I acknowledged that this can be confusing and made the appropriate changes. 
+Initially my graph only examined the backgrounds of passengers who survived, however upon exploring the feedback I received from my peers, I realized having both passenger outcomes (survived and dead) on the graph was important for context. I achieved this by implementing a stacked, double bar graph. For the x axis, the socioeconomic class was encoded to better demonstrate the impact it had on survivalhood across all variables. Y axis encoding was the number of passengers to better display the bar chart. Color encodings were based off the age, location, and and gender variables. As a view clicked through the buttons, the colors of the stacked bar's changed accordingly. 
 
-Finally, I changed the opacity of the bars to prevent any confusion on where the lines began and ended. 
+A change I made in the process of creating the visualization was to only display certain value's in the legend. Initially all the legend colors were on display as the user jumped between graphs, however I acknowledged that this can be confusing and made the appropriate changes. In addition, I changed the opacity of the bars to prevent any confusion on where the lines began and ended. I also added "Survived" and "Died" labels to x axis for better comprehension. 
 
 
 Feedback - include all feedback you received from others on your visualization 
@@ -26,7 +26,7 @@ Feedback - include all feedback you received from others on your visualization
 
  Third feedback: "I guess what jumps out and what might be the key takeaway of this visualisation, is that by gender, location, or age group, more survivors were first class passengers than belonged to either second or third class. Perhaps I would consider experimenting with the y axis a bit here. I think rather than absolute number of survivors it showed share of survivors in a class, the pattern of survival as affected by class would be clearer."
 
- >> final visualization: http://bl.ocks.org/anajaved/raw/09f12e8919612d1e3570a3b89065db61/
+ >> final visualization: http://bl.ocks.org/anajaved/raw/b5f1bab7b1aeca647475c312c77c1d77/
 
  
 Resources - list any sources you consulted to create your visualization
