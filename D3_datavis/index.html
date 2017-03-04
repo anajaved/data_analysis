@@ -1,4 +1,4 @@
-<!-- http://bl.ocks.org/anajaved/raw/09f12e8919612d1e3570a3b89065db61/ -->
+<!-- http://bl.ocks.org/anajaved/raw/b5f1bab7b1aeca647475c312c77c1d77/ -->
 
 <!DOCTYPE html>
 <html>
@@ -13,9 +13,25 @@
     h2 {
         text-align: center;
         text-decoration: underline;
-        }
+    }
 
-    </style>
+    p{
+        font-family: sans-serif;
+        font-size: 8.5px;
+
+    }
+       </style>
+
+    <!-- survival axis labels  -->
+    <p style="position:relative;left:160px; top:813px;">Died</p>
+    <p style="position:relative;left:270px;top:794px;">Survived</p>
+
+    <p style="position:relative;left:428px; top:775px;">Died</p>
+    <p style="position:relative;left:536px;top:756px;">Survived</p>
+
+    <p style="position:relative;left:696px; top:738px;">Died</p>
+    <p style="position:relative;left:808px;top:720px;">Survived</p>
+
 
     <script type="text/javascript"> 
 
@@ -35,11 +51,11 @@
 
         data.forEach(function( d ) {
                     if( 0 <= d.Age && d.Age <= 18 ) {
-                        d.agegroup = "Child";
+                        d.agegroup = "Child: <18yrs";
                     } else if( 18 < d.Age && d.Age <= 59 ) {
-                        d.agegroup = "Adult";
+                        d.agegroup = "Adult: 18-60 yrs";
                     } else if( 60 < d.Age && d.Age <= 130 ) {
-                        d.agegroup = "Elderly";
+                        d.agegroup = "Elderly: >60yrs";
                     } else {d.agegroup= "No Age"} 
                 } );
 
@@ -54,9 +70,9 @@
 
        	data.forEach(function( d ) {
                     if( d.Survived == 0 ) {
-                        d.Survival = "Dead";
+                        d.Survival = "Died";
                     } else if( d.Survived == 1 ) {
-                        d.Survival = "Lived";
+                        d.Survival = "Survived";
                    
                     } });
 
@@ -90,16 +106,18 @@
         var the_chart = new dimple.chart(svg, data);
         var x= the_chart.addCategoryAxis("x", ["Pclass", "Survival"]);
         var y= the_chart.addMeasureAxis("y", "count");
-        the_chart.addSeries("locationgroup", dimple.plot.bar);
+        the_chart.addSeries('locationgroup', dimple.plot.bar);
         the_chart.addLegend(100,20, 950, 30, "left");
-        x.title= "Socioeconomic Class (1- Upper, 3- Lower) & Survival";
-        x.titleShape
-        y.title= "Number of Passengers"
+        x.title= "Socioeconomic Class (1- Upper, 3- Lower)";
+        x.fontSize=12;
+        y.fontSize=12;
+        y.title= "Number of Passengers";
         the_chart.draw();
-    	
+        
+
     	d3.selectAll("rect")
     		.style("opacity", 1);
-
+       
         // adding functionality to buttons & style to bars
 
         var button_1 = d3.select("#btn").on("click", function() {
@@ -109,8 +127,11 @@
             d3.selectAll("rect")
     			.style("opacity", 1); 
 
-    		d3.selectAll('.dimple-southampton, .dimple-cherbourg, .dimple-queenstown, .dimple-no-age, .dimple-adult, .dimple-child, .dimple-elderly')
+    		d3.selectAll('.dimple-southampton, .dimple-cherbourg, .dimple-queenstown, .dimple-no-age, .dimple-adult--18-60-yrs, .dimple-child---18yrs, .dimple-elderly---60yrs')
     			.remove();
+
+            d3.selectAll
+
         });
 
         var button_2 = d3.select("#btn2").on("click", function() {
@@ -119,9 +140,8 @@
             d3.selectAll("rect")
     			.style("opacity", 1);
 
-    		d3.selectAll('.dimple-male, .dimple-female, .dimple-no-age, .dimple-adult, .dimple-child, .dimple-elderly')
+    		d3.selectAll('.dimple-male, .dimple-female, .dimple-no-age, .dimple-adult--18-60-yrs, .dimple-child---18yrs, .dimple-elderly---60yrs')
     			.remove();
-
     	});
         
         var button_3 = d3.select("#btn3").on("click", function() {
@@ -136,7 +156,6 @@
             });
 
         };
-
 
 </script> 
 </head>
@@ -158,8 +177,8 @@
     <button id="btn2" style="color: white; width: 80px; height: 50px; border: 1.5px solid black; border-radius: 15px; margin-left:5px ; margin-top: 40px; ">Location Breakdown</button>
 
     <button id="btn3" style="color: white; width: 80px; height: 50px; border: 1.5px solid black; border-radius: 15px; margin-left:5px ; margin-top: 40px; ">Age Group Breakdown</button>
-    </div>
 
+     </div>
 
 </body>
 </html>
